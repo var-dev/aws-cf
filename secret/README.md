@@ -42,8 +42,11 @@ aws configure --profile profile1
 ```
 
 ### Query the secrets manager using aws-cli
+#### CMD
 ```
 docker run --rm -it -v "%userprofile%\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretsVault-bVMjveIsvBvb --output json --query SecretString
-
+```
+#### Powershell
+```
 docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretsVault-bVMjveIsvBvb --output json --query SecretString
 ```
