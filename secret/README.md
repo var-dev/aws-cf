@@ -1,14 +1,17 @@
 # Secret
 
 ## A cf template to create an aws secrets storage with an user that can access the entries. 
+### Parameters:
+  KmsKeyArn (key_arn/'')
+  GrantUsrAdmin (yes/no)
 
 ### Create stack
 ```
-aws cloudformation create-stack --on-failure DELETE --profile awsa --template-body file://secretsVault.yaml  --stack-name secretStore5 --capabilities CAPABILITY_IAM
+aws cloudformation create-stack --on-failure DELETE --profile awsa --template-body file://secretsVault.yaml --stack-name secretStore5 --capabilities CAPABILITY_IAM
 ```
 ### Deploy stack
 ```
-aws cloudformation deploy --profile awsa --template-file secretsVault.yaml  --stack-name secretStore5  --capabilities CAPABILITY_IAM
+aws cloudformation deploy --profile awsa --stack-name secretStore5 --template-file secretsVault.yaml --capabilities CAPABILITY_IAM
 ```
 ### Update stack
 ```
@@ -49,4 +52,14 @@ docker run --rm -it -v "%userprofile%\.aws:/root/.aws" amazon/aws-cli secretsman
 #### Powershell
 ```
 docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretsVault-bVMjveIsvBvb --output json --query SecretString
+```
+
+### Put secret values from file
+```
+aws secretsmanager put-secret-value  --profile profile1 --no-cli-pager --cli-input-yaml --secret-string file://secret-example.yaml --secret-id secretsVault-bVMjveIsvBvb
+```
+
+### Read single secret
+```
+docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretsVault-bVMjveIsvBvb --output text --query SecretString | python -c "import yaml,sys;print(yaml.safe_load(sys.stdin)['asd'])"
 ```
