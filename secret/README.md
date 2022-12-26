@@ -2,8 +2,8 @@
 
 ## A cf template to create an aws secrets storage with an user that can access the entries. 
 ### Parameters:
-  KmsKeyArn (key_arn/'')
-  GrantUsrAdmin (yes/no)
+  * KmsKeyArn (key_arn/'')
+  * GrantUsrAdmin (yes/no)
 
 ### Create stack
 ```
