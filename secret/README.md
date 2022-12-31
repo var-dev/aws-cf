@@ -21,10 +21,9 @@ aws cloudformation update-stack --profile awsa --stack-name secretStore5 --te
 ```
 aws cloudformation delete-stack --profile awsa --stack-name secretStore5
 ```
-
 ### Describe stack
 ```
-aws cloudformation describe-stack-events --profile awsa --stack-name secretStore5
+aws cloudformation describe-stack-events --no-cli-pager --profile awsa --stack-name secretStore5
 aws cloudformation describe-stacks --profile awsa --stack-name secretStore5
 ```
 
@@ -47,19 +46,41 @@ aws configure --profile profile1
 ### Query the secrets manager using aws-cli
 #### CMD
 ```
-docker run --rm -it -v "%userprofile%\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretsVault-bVMjveIsvBvb --output json --query SecretString
+docker run --rm -it -v "%userprofile%\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretStore1Test101 --output json --query SecretString
 ```
 #### Powershell
 ```
-docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretsVault-bVMjveIsvBvb --output json --query SecretString
+docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretStore1Test101 --output text --query SecretString
 ```
 
 ### Put secret values from file
 ```
-aws secretsmanager put-secret-value  --profile profile1 --no-cli-pager --cli-input-yaml --secret-string file://secret-example.yaml --secret-id secretsVault-bVMjveIsvBvb
+aws secretsmanager put-secret-value  --profile profile1 --no-cli-pager --secret-string file://secret-example.yaml --secret-id secretStore1Test101
+aws secretsmanager put-secret-value  --profile profile1 --no-cli-pager --secret-string file://secret-example.json --secret-id secretStore1Test101
 ```
 
 ### Read single secret
 ```
-docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretsVault-bVMjveIsvBvb --output text --query SecretString | python -c "import yaml,sys;print(yaml.safe_load(sys.stdin)['asd'])"
+docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretStore1Test101 --output text --query SecretString | python -c "import yaml,sys;print(yaml.safe_load(sys.stdin)['asd'])"
+```
+
+### Assume role
+```
+aws sts assume-role --profile awsa  --role-session-name role1 --role-arn arn:aws:iam::546145655640:role/secretStore1-secretsVaultRole-E85NRMUHC8S4
+```
+### Update a temp profile in $home\.aws\config $home\.aws\credentials
+### Creating the ENV variables will do it too
+```
+Credentials:
+[profileA]
+aws_access_key_id = ASIAX6KGRLNMF5ON5W7C
+aws_secret_access_key = k34FCMyLKDakYkdfHNj000pvJdTKvLIsdbD7kLH5
+aws_session_token = IQoJb3JpZ2luX2VjED0aCXVzLXdlc3QtMiJHMEUCIA+xK
+```
+### Verify that you assumed the IAM role by running this command:
+```
+```
+aws sts get-caller-identity --profile profileA
+```
+docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profileA --no-cli-pager --secret-id secretStore1Test101 --output text --query SecretString | python -c "import json,sys;print(json.load(sys.stdin)['zxc'])"
 ```
