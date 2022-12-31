@@ -2,8 +2,9 @@
 
 ## A cf template to create an aws secrets storage with an user that can access the entries. 
 ### Parameters:
-  * KmsKeyArn (key_arn/'')
-  * GrantUsrAdmin (yes/no)
+  * sName - second part of the SM secret ID; first is the CF stack name.
+  * KmsKeyArn (key_arn/'') - allows to use a non default key.
+  * GrantAdmin (yes/no) - if you want the user/role to have adm privileges.
 
 ### Create stack
 ```
@@ -59,7 +60,7 @@ aws secretsmanager put-secret-value  --profile profile1 --no-cli-pager --secret-
 aws secretsmanager put-secret-value  --profile profile1 --no-cli-pager --secret-string file://secret-example.json --secret-id secretStore1Test101
 ```
 
-### Read single secret
+### Read single secret (YAML)
 ```
 docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profile1 --no-cli-pager --secret-id secretStore1Test101 --output text --query SecretString | python -c "import yaml,sys;print(yaml.safe_load(sys.stdin)['asd'])"
 ```
@@ -79,8 +80,9 @@ aws_session_token = IQoJb3JpZ2luX2VjED0aCXVzLXdlc3QtMiJHMEUCIA+xK
 ```
 ### Verify that you assumed the IAM role by running this command:
 ```
-```
 aws sts get-caller-identity --profile profileA
+```
+### Read single secret (JSON) using the assumed role
 ```
 docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profileA --no-cli-pager --secret-id secretStore1Test101 --output text --query SecretString | python -c "import json,sys;print(json.load(sys.stdin)['zxc'])"
 ```
