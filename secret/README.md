@@ -86,3 +86,20 @@ aws sts get-caller-identity --profile profileA
 ```
 docker run --rm -it -v "$home\.aws:/root/.aws" amazon/aws-cli secretsmanager get-secret-value  --profile profileA --no-cli-pager --secret-id secretStore1Test101 --output text --query SecretString | python -c "import json,sys;print(json.load(sys.stdin)['zxc'])"
 ```
+
+### A way to put the sts assume-role to work
+```
+export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s" \
+$(aws sts assume-role \
+--role-arn arn:aws:iam::123456789012:role/MyAssumedRole \
+--role-session-name MySessionName \
+--query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" \
+--output text))
+```
+#### Same in Powershell
+```
+$Env:AWS_ROLE_ARN=$(aws cloudformation describe-stacks --profile awsa --stack-name secretStore5 --query "Stacks[0].Outputs[?OutputKey=='secretsVaultRoleArn'][].OutputValue" --output text)
+$Env:AWS_ROLE_TEMP1=$(aws sts assume-role --profile awsa  --role-session-name role1 --role-arn $Env:AWS_ROLE_ARN --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)
+
+results in the \t separated list: key\tsecret\tsessionkey 
+```
